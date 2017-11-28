@@ -158,6 +158,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
                 }
                 break;
             case GAME_OVER:
+                mainShip.stop();
                 break;
         }
 

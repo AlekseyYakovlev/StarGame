@@ -160,7 +160,7 @@ public class MainShip extends Ship {
     /**
      * Останавливаем корабль
      */
-    private void stop() {
+    void stop() {
         v.setZero();
     }
 
