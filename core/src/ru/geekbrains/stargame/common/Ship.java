@@ -94,6 +94,7 @@ public class Ship extends Sprite {
      * Взрыв корабля
      */
     public void boom() {
+        hp = 0;
         Explosion explosion = explosionPool.obtain();
         explosion.set(getHeight(), pos);
     }

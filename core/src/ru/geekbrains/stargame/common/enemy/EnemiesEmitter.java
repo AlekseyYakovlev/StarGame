@@ -35,6 +35,8 @@ public class EnemiesEmitter {
     private static final float ENEMY_BIG_RELOAD_INTERVAL = 1f;
     private static final int ENEMY_BIG_HP = 20;
 
+    private int stage;
+
     private Rect worldBounds;
     private Sound bulletSound;
 
@@ -67,11 +69,16 @@ public class EnemiesEmitter {
 
     }
 
+    public void setToNewGame() {
+        stage = 1;
+    }
+
     /**
      * Генерация врагов в зависимости от времени
      * @param deltaTime дельта
      */
-    public void generateEnemies(float deltaTime) {
+    public void generateEnemies(float deltaTime, int frags) {
+        stage = frags / 10 + 1;
         generateTimer += deltaTime;
         if (generateTimer >= generateInterval) {
             generateTimer = 0f;
@@ -84,11 +91,11 @@ public class EnemiesEmitter {
                         bulletRegion,
                         ENEMY_SMALL_BULLET_HEIGHT,
                         ENEMY_SMALL_BULLET_VY,
-                        ENEMY_SMALL_BULLET_DAMAGE,
+                        ENEMY_SMALL_BULLET_DAMAGE * stage,
                         ENEMY_SMALL_RELOAD_INTERVAL,
                         bulletSound,
                         ENEMY_SMALL_HEIGHT,
-                        ENEMY_SMALL_HP
+                        ENEMY_SMALL_HP * stage
                 );
             } else if (type < 0.9f) {
                 enemy.set(
@@ -97,11 +104,11 @@ public class EnemiesEmitter {
                         bulletRegion,
                         ENEMY_MEDIUM_BULLET_HEIGHT,
                         ENEMY_MEDIUM_BULLET_VY,
-                        ENEMY_MEDIUM_BULLET_DAMAGE,
+                        ENEMY_MEDIUM_BULLET_DAMAGE * stage,
                         ENEMY_MEDIUM_RELOAD_INTERVAL,
                         bulletSound,
                         ENEMY_MEDIUM_HEIGHT,
-                        ENEMY_MEDIUM_HP
+                        ENEMY_MEDIUM_HP * stage
                 );
             } else {
                 enemy.set(
@@ -110,15 +117,19 @@ public class EnemiesEmitter {
                         bulletRegion,
                         ENEMY_BIG_BULLET_HEIGHT,
                         ENEMY_BIG_BULLET_VY,
-                        ENEMY_BIG_BULLET_DAMAGE,
+                        ENEMY_BIG_BULLET_DAMAGE * stage,
                         ENEMY_BIG_RELOAD_INTERVAL,
                         bulletSound,
                         ENEMY_BIG_HEIGHT,
-                        ENEMY_BIG_HP
+                        ENEMY_BIG_HP * stage
                 );
             }
             enemy.pos.x = Rnd.nextFloat(worldBounds.getLeft() + enemy.getHalfWidth(), worldBounds.getRight() - enemy.getHalfWidth());
             enemy.setBottom(worldBounds.getTop());
         }
+    }
+
+    public int getStage() {
+        return stage;
     }
 }
