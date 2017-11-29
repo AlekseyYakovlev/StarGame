@@ -17,16 +17,19 @@ public class MainShip extends Ship {
 
     private static final float SHIP_HEIGHT = 0.15f; // размер корабля
     private static final float BOTTOM_MARGIN = 0.05f; // отступ от низа экрана
-    private static final int INVALID_POINTER = -1;
+//    private static final int INVALID_POINTER = -1;
 
     private final Vector2 v0 = new Vector2(0.5f, 0.0f); // нулевая скорость с направлением вправо
+
+    private Vector2 lastTouchedPosition =new Vector2(0,0);
 
     private boolean pressedLeft;
     private boolean pressedRight;
     private boolean readyToShoot;
+    private boolean touchControlOn;
 
-    private int leftPointer = INVALID_POINTER;
-    private int rightPointer = INVALID_POINTER;
+//    private int leftPointer = INVALID_POINTER;
+//    private int rightPointer = INVALID_POINTER;
 
     /**
      * Конструктор
@@ -60,8 +63,10 @@ public class MainShip extends Ship {
     public void update(float deltaTime) {
         super.update(deltaTime);
         pos.mulAdd(v, deltaTime);
+        if (touchControlOn && v.x!=0 &&(lastTouchedPosition.x-pos.x)/v.x<0)  v.x=0;
+
         reloadTimer += deltaTime;
-        if (readyToShoot || reloadTimer >= reloadInterval) {
+        if (readyToShoot && reloadTimer >= reloadInterval) {
             reloadTimer = 0f;
             shoot();
         }
@@ -76,6 +81,7 @@ public class MainShip extends Ship {
     }
 
     public void keyDown(int keycode) {
+        touchControlOn=false;
         switch (keycode) {
             case Input.Keys.A:
             case Input.Keys.LEFT:
@@ -101,20 +107,14 @@ public class MainShip extends Ship {
             case Input.Keys.A:
             case Input.Keys.LEFT:
                 pressedLeft = false;
-                if (pressedRight) {
-                    moveRight();
-                } else {
-                    stop();
-                }
+                if (pressedRight) moveRight();
+                else stop();
                 break;
             case Input.Keys.D:
             case Input.Keys.RIGHT:
                 pressedRight = false;
-                if (pressedLeft) {
-                    moveLeft();
-                } else {
-                    stop();
-                }
+                if (pressedLeft) moveLeft();
+                else stop();
                 break;
             case Input.Keys.UP:
                 break;
@@ -123,52 +123,26 @@ public class MainShip extends Ship {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        if(touch.x < pos.x) {
-            if(leftPointer != INVALID_POINTER) return false;
-            leftPointer = pointer;
-            moveLeft();
-        } else if (touch.x > pos.x) {
-            if(rightPointer != INVALID_POINTER) return false;
-            rightPointer = pointer;
-            moveRight();
-        }
+        touchControlOn=true;
         readyToShoot=true;
+        lastTouchedPosition=touch;
+        if(touch.x < pos.x) moveLeft();
+        else if (touch.x > pos.x)  moveRight();
         return false;
     }
 
     @Override
     public boolean touchDragged(Vector2 touch, int pointer) {
         readyToShoot=true;
-        if(touch.x < pos.x) {
-            if(leftPointer != INVALID_POINTER) return false;
-            leftPointer = pointer;
-            moveLeft();
-        } else if (touch.x > pos.x) {
-            if(rightPointer != INVALID_POINTER) return false;
-            rightPointer = pointer;
-            moveRight();
-        }
+        lastTouchedPosition=touch;
+        if(touch.x < pos.x) moveLeft();
+        else if (touch.x > pos.x)  moveRight();
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
         readyToShoot=false;
-        if(pointer == leftPointer) {
-            leftPointer = INVALID_POINTER;
-            if(rightPointer != INVALID_POINTER) {
-                moveRight();
-                readyToShoot=true;
-            }
-            else stop();
-        } else if(pointer == rightPointer) {
-            rightPointer = INVALID_POINTER;
-            if(leftPointer != INVALID_POINTER) {
-                moveLeft();
-                readyToShoot=true;
-            }
-            else stop();
-        }
         return false;
     }
 
@@ -177,6 +151,7 @@ public class MainShip extends Ship {
      */
     private void moveRight() {
         v.set(v0);
+        System.out.println("right"+v.x);
     }
 
     /**
@@ -184,6 +159,7 @@ public class MainShip extends Ship {
      */
     private void moveLeft() {
         v.set(v0).rotate(180);
+        System.out.println("left "+v.x);
     }
 
     /**
