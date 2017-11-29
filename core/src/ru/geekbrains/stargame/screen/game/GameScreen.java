@@ -28,6 +28,7 @@ import ru.geekbrains.stargame.common.explosion.ExplosionPool;
 import ru.geekbrains.stargame.common.Background;
 import ru.geekbrains.stargame.common.star.TrackingStar;
 import ru.geekbrains.stargame.screen.game.ui.ButtonNewGame;
+import ru.geekbrains.stargame.screen.game.ui.HealthBar;
 import ru.geekbrains.stargame.screen.game.ui.MessageGameOver;
 
 /**
@@ -67,6 +68,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
     private Sound soundBullet;
     private Sound soundExplosion;
     private Music music;
+
+    private HealthBar healthBar;
 
     private Font font;
     private StringBuilder sbFrags = new StringBuilder();
@@ -110,6 +113,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
 
         this.messageGameOver = new MessageGameOver(atlas);
         this.buttonNewGame = new ButtonNewGame(atlas, this);
+
+        this.healthBar=new HealthBar(atlas,worldBounds,mainShip);
 
         this.font = new Font("font/font.fnt", "font/font.png");
         this.font.setWorldSize(FONT_SIZE);
@@ -248,6 +253,7 @@ public class GameScreen extends Base2DScreen implements ActionListener {
             buttonNewGame.draw(batch);
         }
         printInfo();
+        healthBar.draw(batch,mainShip.getHp());
         batch.end();
     }
 

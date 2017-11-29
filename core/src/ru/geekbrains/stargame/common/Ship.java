@@ -21,6 +21,7 @@ public class Ship extends Sprite {
 
     protected final Vector2 v = new Vector2(); // скорость корабля
     protected int hp; // жизни корабля
+    protected int maxHp;
     protected Rect worldBounds; // граница мира
 
     protected ExplosionPool explosionPool; // пулл взрывов
@@ -107,4 +108,7 @@ public class Ship extends Sprite {
         return hp;
     }
 
+    public int getMaxHp() {
+        return maxHp;
+    }
 }

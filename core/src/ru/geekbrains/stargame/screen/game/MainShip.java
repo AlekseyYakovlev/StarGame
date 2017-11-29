@@ -45,7 +45,7 @@ public class MainShip extends Ship {
         this.bulletV.set(0, 0.5f);
         this.bulletDamage = 1;
         this.reloadInterval = 0.2f;
-        hp = 100;
+        maxHp=hp = 100;
         flushDestroy();
     }
 
