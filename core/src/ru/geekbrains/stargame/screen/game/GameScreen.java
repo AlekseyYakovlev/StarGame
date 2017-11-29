@@ -303,6 +303,17 @@ public class GameScreen extends Base2DScreen implements ActionListener {
                 break;
         }
     }
+    @Override
+    protected void touchDragged(Vector2 touch, int pointer) {
+        switch (state) {
+            case PLAYING:
+                mainShip.touchDragged(touch, pointer);
+                break;
+            case GAME_OVER:
+                buttonNewGame.touchDragged(touch, pointer);
+                break;
+        }
+    }
 
     @Override
     protected void touchUp(Vector2 touch, int pointer) {
@@ -315,6 +326,8 @@ public class GameScreen extends Base2DScreen implements ActionListener {
                 break;
         }
     }
+
+
 
     @Override
     public boolean keyDown(int keycode) {

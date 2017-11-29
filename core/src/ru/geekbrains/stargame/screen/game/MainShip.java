@@ -23,6 +23,7 @@ public class MainShip extends Ship {
 
     private boolean pressedLeft;
     private boolean pressedRight;
+    private boolean readyToShoot;
 
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
@@ -60,7 +61,7 @@ public class MainShip extends Ship {
         super.update(deltaTime);
         pos.mulAdd(v, deltaTime);
         reloadTimer += deltaTime;
-        if (reloadTimer >= reloadInterval) {
+        if (readyToShoot || reloadTimer >= reloadInterval) {
             reloadTimer = 0f;
             shoot();
         }
@@ -87,6 +88,9 @@ public class MainShip extends Ship {
                 moveRight();
                 break;
             case Input.Keys.UP:
+                shoot();
+                break;
+            case Input.Keys.SPACE:
                 shoot();
                 break;
         }
@@ -119,11 +123,27 @@ public class MainShip extends Ship {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        if(touch.x < worldBounds.pos.x) {
+        if(touch.x < pos.x) {
             if(leftPointer != INVALID_POINTER) return false;
             leftPointer = pointer;
             moveLeft();
-        } else {
+        } else if (touch.x > pos.x) {
+            if(rightPointer != INVALID_POINTER) return false;
+            rightPointer = pointer;
+            moveRight();
+        }
+        readyToShoot=true;
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        readyToShoot=true;
+        if(touch.x < pos.x) {
+            if(leftPointer != INVALID_POINTER) return false;
+            leftPointer = pointer;
+            moveLeft();
+        } else if (touch.x > pos.x) {
             if(rightPointer != INVALID_POINTER) return false;
             rightPointer = pointer;
             moveRight();
@@ -133,12 +153,21 @@ public class MainShip extends Ship {
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
+        readyToShoot=false;
         if(pointer == leftPointer) {
             leftPointer = INVALID_POINTER;
-            if(rightPointer != INVALID_POINTER) moveRight(); else stop();
+            if(rightPointer != INVALID_POINTER) {
+                moveRight();
+                readyToShoot=true;
+            }
+            else stop();
         } else if(pointer == rightPointer) {
             rightPointer = INVALID_POINTER;
-            if(leftPointer != INVALID_POINTER) moveLeft(); else stop();
+            if(leftPointer != INVALID_POINTER) {
+                moveLeft();
+                readyToShoot=true;
+            }
+            else stop();
         }
         return false;
     }
